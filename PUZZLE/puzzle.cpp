@@ -8,7 +8,6 @@ using namespace sf;
 
 int main()
 {
-    // Membuat jendela aplikasi dengan ukuran 400x400 piksel dan judul "15-Puzzle!"
     RenderWindow app(VideoMode(400, 400), "15-Puzzle!");
     app.setFramerateLimit(60); // Membatasi frame rate agar aplikasi berjalan lebih stabil
 
