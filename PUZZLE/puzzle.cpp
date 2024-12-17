@@ -9,7 +9,7 @@ using namespace sf;
 int main()
 {
     RenderWindow app(VideoMode(400, 400), "15-Puzzle!");
-    app.setFramerateLimit(60); // Membatasi frame rate agar aplikasi berjalan lebih stabil
+    app.setFramerateLimit(60); 
 
     Font font;
     // Memuat font dari file ARCADE_I.TTF untuk digunakan dalam teks
