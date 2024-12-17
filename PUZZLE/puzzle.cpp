@@ -8,76 +8,72 @@ using namespace sf;
 
 int main()
 {
-    // Membuat jendela aplikasi dengan ukuran 400x400 piksel dan judul "15-Puzzle!"
+
     RenderWindow app(VideoMode(400, 400), "15-Puzzle!");
-    app.setFramerateLimit(60); // Membatasi frame rate agar aplikasi berjalan lebih stabil
+    app.setFramerateLimit(60); 
 
     Font font;
-    // Memuat font dari file ARCADE_I.TTF untuk digunakan dalam teks
     if (!font.loadFromFile("ARCADE_I.TTF"))
     {
         std::cerr << "Error loading font!" << std::endl;
         return -1;
     }
 
-    int w = 100; // Ukuran tiap blok dalam grid adalah 100x100 piksel
-    int grid[6][6] = { 0 }; // Matriks 6x6 digunakan untuk menyimpan nilai grid (termasuk padding untuk batas)
-    Text text[20]; // Array teks untuk menampilkan angka pada grid
+    int w = 100; 
+    int grid[6][6] = { 0 }; 
+    Text text[20]; 
 
-    // Inisialisasi grid dan objek teks
+    
     int n = 0;
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
         {
-            n++; // Menghitung angka (1-15)
-            grid[i + 1][j + 1] = n; // Memasukkan angka ke dalam grid (dengan offset +1 untuk padding)
+            n++; 
+            grid[i + 1][j + 1] = n; 
             text[n].setFont(font);
-            text[n].setString(std::to_string(n)); // Mengatur angka sebagai string
-            text[n].setCharacterSize(48); // Ukuran teks
-            text[n].setFillColor(Color::White); // Warna teks putih
+            text[n].setString(std::to_string(n)); 
+            text[n].setCharacterSize(48);
+            text[n].setFillColor(Color::White); 
             FloatRect textBounds = text[n].getLocalBounds();
-            text[n].setOrigin(textBounds.width / 2, textBounds.height / 2); // Pusatkan teks pada kotak
+            text[n].setOrigin(textBounds.width / 2, textBounds.height / 2); 
         }
 
-    grid[4][4] = 16; // Menandai kotak kosong (angka 16 dianggap kosong)
+    grid[4][4] = 16; 
 
-    // Mengacak grid dengan menggeser kotak kosong secara acak
+   
     srand(static_cast<unsigned>(time(0)));
-    for (int i = 0; i < 1000; i++) // Loop untuk mengacak 1000 langkah
+    for (int i = 0; i < 1000; i++) 
     {
-        int x = 4; // Posisi awal kotak kosong
+        int x = 4; 
         int y = 4;
 
-        int dx = 0, dy = 0; // Delta untuk menggerakkan kotak kosong
-        int dir = rand() % 4; // Pilih arah acak (0 = kiri, 1 = kanan, 2 = atas, 3 = bawah)
+        int dx = 0, dy = 0; 
+        int dir = rand() % 4; 
         if (dir == 0) dx = -1;
         if (dir == 1) dx = 1;
         if (dir == 2) dy = -1;
         if (dir == 3) dy = 1;
 
-        // Periksa apakah pergerakan valid (tidak keluar dari grid)
         if (grid[x + dx][y + dy] != 0 && x + dx >= 1 && x + dx <= 4 && y + dy >= 1 && y + dy <= 4)
         {
-            std::swap(grid[x][y], grid[x + dx][y + dy]); // Tukar nilai dengan kotak kosong
+            std::swap(grid[x][y], grid[x + dx][y + dy]); 
         }
     }
 
-    bool isWin = false; // Menandai apakah puzzle sudah selesai atau belum
+    bool isWin = false; 
 
-    // Loop utama aplikasi
     while (app.isOpen())
     {
         Event e;
-        while (app.pollEvent(e)) // Memeriksa semua event yang terjadi
+        while (app.pollEvent(e)) 
         {
-            if (e.type == Event::Closed) // Jika jendela ditutup
+            if (e.type == Event::Closed) 
                 app.close();
 
-            if (e.type == Event::KeyPressed && !isWin) // Jika ada tombol ditekan dan belum menang
+            if (e.type == Event::KeyPressed && !isWin) 
             {
                 int x = 0, y = 0;
 
-                // Cari posisi kotak kosong (16)
                 for (int i = 1; i <= 4; i++)
                     for (int j = 1; j <= 4; j++)
                         if (grid[i][j] == 16)
@@ -86,52 +82,47 @@ int main()
                             y = j;
                         }
 
-                int dx = 0, dy = 0; // Delta untuk pergerakan
-                if (e.key.code == Keyboard::Left)  dx = 0, dy = 1;  // Geser ke kiri
-                if (e.key.code == Keyboard::Right) dx = 0, dy = -1; // Geser ke kanan
-                if (e.key.code == Keyboard::Up)    dx = 1, dy = 0;  // Geser ke atas
-                if (e.key.code == Keyboard::Down)  dx = -1, dy = 0; // Geser ke bawah
+                int dx = 0, dy = 0; 
+                if (e.key.code == Keyboard::Left)  dx = 0, dy = 1;  
+                if (e.key.code == Keyboard::Right) dx = 0, dy = -1;
+                if (e.key.code == Keyboard::Up)    dx = 1, dy = 0;  
+                if (e.key.code == Keyboard::Down)  dx = -1, dy = 0; 
 
-                // Periksa apakah pergerakan valid
                 if (grid[x + dx][y + dy] != 0 && x + dx >= 1 && x + dx <= 4 && y + dy >= 1 && y + dy <= 4)
                 {
-                    std::swap(grid[x][y], grid[x + dx][y + dy]); // Tukar nilai dengan kotak kosong
+                    std::swap(grid[x][y], grid[x + dx][y + dy]); 
                 }
             }
         }
 
-        // Periksa kondisi kemenangan
         isWin = true;
         int n = 0;
         for (int i = 1; i <= 4; i++)
             for (int j = 1; j <= 4; j++)
             {
                 n++;
-                if (n == 16) break; // Kotak kosong diabaikan
-                if (grid[i][j] != n) isWin = false; // Jika urutan salah, belum menang
+                if (n == 16) break; 
+                if (grid[i][j] != n) isWin = false; 
             }
 
-        app.clear(Color::White); // Bersihkan layar dengan warna putih
-
-        // Gambar grid dan angka
+        app.clear(Color::White); 
+        
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < 4; j++)
             {
                 int n = grid[i + 1][j + 1];
-                if (n == 16) continue; // Kotak kosong tidak digambar
+                if (n == 16) continue; 
 
-                // Gambar blok hitam
                 RectangleShape block(Vector2f(w - 2, w - 2));
                 block.setFillColor(Color::Black);
                 block.setPosition(j * w + 1, i * w + 1);
                 app.draw(block);
 
-                // Gambar angka pada blok
                 text[n].setPosition(j * w + w / 2, i * w + w / 2);
                 app.draw(text[n]);
             }
 
-        if (isWin) // Jika menang, tampilkan pesan "YOU WIN!"
+        if (isWin) 
         {
             Text winText;
             winText.setFont(font);
@@ -144,8 +135,8 @@ int main()
             app.draw(winText);
         }
 
-        app.display(); // Tampilkan semua elemen di layar
+        app.display(); 
     }
 
-    return 0; // Keluar dari program
+    return 0; 
 }
